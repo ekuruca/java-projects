@@ -1,9 +1,11 @@
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 public class FamilyTree {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		
-		Scanner keyboard1 = new Scanner(System.in);
-		Scanner keyboard2 = new Scanner(System.in);
+		Scanner keyboard1 = new Scanner(new File("prob1-1.txt"));
+		Scanner keyboard2 = new Scanner(new File ("prob1-2.txt"));
 		Map<String, Character> people = new HashMap<String, Character>();
 		List<BinaryTree> binaryTrees = new ArrayList<BinaryTree>();
 		String name, parent; char sex;
@@ -16,10 +18,15 @@ public class FamilyTree {
 			
 		}
 		
+		for (Map.Entry<String, Character> entry : people.entrySet()) {
+            String k = entry.getKey();
+            char v = entry.getValue();
+            System.out.println("Key: " + k + ", Value: " + v);
+        }
 		
 		while (!keyboard2.hasNext("done")) {
-			name = keyboard2.next();
 			parent = keyboard2.next();
+			name = keyboard2.next();
 			
 			for (BinaryTree t : binaryTrees) {
 				if (name.equals(t.getRoot().getName())) {
@@ -35,6 +42,11 @@ public class FamilyTree {
 			}
 			
 		}
+		
+		System.out.println();
+		for(BinaryTree t : binaryTrees) {
+            System.out.println(t.getRoot().getName());
+        }
 		
 		StringBuilder string = new StringBuilder();
 		
