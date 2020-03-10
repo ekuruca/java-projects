@@ -55,10 +55,14 @@ public class FamilyTree {
 				tree.insert(parent, people.get(parent));
 				binaryTrees.add(tree);
 			} else {
-				for (String str : storedParents) {
+				OUTER: for (String str : storedParents) {
 					if (children.equals(str)) {
-						findAndInsert(binaryTrees, parent, people.get(parent), children);
-						break;
+						for (BinaryTree tree : binaryTrees) {
+							if (tree.find(children)) {
+								tree.insert(parent, people.get(parent));
+								break OUTER;
+							}
+						}
 					}
 				}
 				
@@ -69,10 +73,9 @@ public class FamilyTree {
 						
 					}
 				}
-			
-			
-			
 			}
+			
+			
 		}
 		
 				
@@ -181,8 +184,8 @@ public class FamilyTree {
 	    	}
 	    }
 	    
-	    public String parentMatch(String name) {
-	    	return find(root, name);
+	    public boolean find(String name) {
+	    	return findRec(root, name);
 	    }
 	    
 	    public boolean rootMatch(String name) {
@@ -193,20 +196,20 @@ public class FamilyTree {
 	    	return false;
 	    }
 	   
-	    protected String find(Node node, String name) {  
+	    private boolean findRec(Node node, String name) {  
             if (node.getName().equals(name)) {
-            	return node.getName();
+            	return true;
             }
             
             if (node.left != null) {
-            	return find(node.left, name);
+            	return findRec(node.left, name);
             }
             
             if (node.right != null) {
-            	return find(node.right, name);
+            	return findRec(node.right, name);
             }
             
-            return null;
+            return false;
 	        
 	    }
 
@@ -226,11 +229,4 @@ public class FamilyTree {
 	      
 	}
 	
-	public static void findAndInsert(List<BinaryTree> list, String parent, char sex, String name) {
-    	for (BinaryTree tree : list) {
-    		if (name.equals(tree.find(tree.getRoot(), name))) {
-    			tree.insert(parent, sex);
-    		}
-    	}
-    }
 }
