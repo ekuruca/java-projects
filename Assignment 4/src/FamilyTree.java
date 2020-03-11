@@ -50,30 +50,29 @@ public class FamilyTree {
 				}
 			}
 			
+			System.out.println("countP: " + countP + " countC: " + countC);
+			
 			if (countP == 0 && countC < 2) {
 				BinaryTree tree = new BinaryTree(children, people.get(children));
-				tree.insert(parent, people.get(parent));
+				tree.insert(tree.getRoot(), parent, people.get(parent));
 				binaryTrees.add(tree);
-			} else {
-				OUTER: for (String str : storedParents) {
-					if (children.equals(str)) {
-						for (BinaryTree tree : binaryTrees) {
-							if (tree.find(children)) {
-								tree.insert(parent, people.get(parent));
-								break OUTER;
-							}
-						}
+				
+			} else if (countP == 1) {
+				for (int i = 0; i < binaryTrees.size(); i++) {
+					if (binaryTrees.get(i).find(children) == true) {
+						binaryTrees.get(i).insert(binaryTrees.get(i).getRoot(), parent, people.get(parent));
 					}
 				}
-				
-				
+			} else {
 				for (BinaryTree t : binaryTrees) {
 					if (t.rootMatch(children)) {
-						t.insert(parent, people.get(parent));
+						t.insert(t.getRoot(), parent, people.get(parent));
 						
 					}
 				}
-			}
+			} 
+			
+			
 			
 			
 		}
@@ -147,28 +146,32 @@ public class FamilyTree {
 	    	return null;
 	    }
 
-	    public void insert(String name, char sex) { 
-	        root = insertRec(root, name, sex); 
+	    public void insert(Node node, String name, char sex) { 
+	    	Queue<Node> q = new LinkedList<Node>(); 
+	        q.add(node); 
+	       
+	        // Do level order traversal until we find 
+	        // an empty place.  
+	        while (!q.isEmpty()) { 
+	            node = q.peek(); 
+	            q.remove(); 
+	       
+	            if (node.left == null) { 
+	                node.left = new Node(name, sex); 
+	                break; 
+	            } else
+	                q.add(node.left); 
+	       
+	            if (node.right == null) { 
+	                node.right = new Node(name, sex); 
+	                break; 
+	            } else
+	                q.add(node.right); 
+	        }
+	    	
 	    } 
 	       
-	    private Node insertRec(Node node, String name, char sex) {
-	         if (node == null) { 
-	             node = new Node(name, sex); 
-	             return node; 
-	         } 
-	         
-	   
-	         if (sex == 'W' && node.left == null) { 
-	             node.left = insertRec(node.left, name, sex); 
-	             
-	         } else if (sex == 'M' && node.right == null) {
-	             node.right = insertRec(node.right, name, sex); 
-	         }
-	   
-	        
-	         return node; 
-	    } 
-	    
+	
 	    public int depth(Node root) {
 	    	if (root == null) {
 	    		return 0;
