@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.Map.Entry;
 
 public class FamilyTree {
 	public static void main(String[] args) throws IOException {
@@ -8,90 +9,71 @@ public class FamilyTree {
 		//Variable decleration and initialization
 		Scanner keyboard1 = new Scanner(new File("prob1-1.txt"));
 		Scanner keyboard2 = new Scanner(new File ("prob1-2.txt"));
-		Map<String, Character> people = new HashMap<String, Character>();
-		List<BinaryTree> binaryTrees = new ArrayList<BinaryTree>();
-		List<String> storedParents = new ArrayList<String>();
-		List<String> storedChildrens = new ArrayList<String>();
-		String name, parent, children; char sex; int countP = 0, countC = 0;
+		Map<String, Node> people = new HashMap<String, Node>(); 
+		Set<Node> roots = new HashSet<Node>();
+		Queue<BinaryTree> trees = new LinkedList<BinaryTree>();
+		String person, parent, children; char sex; 
 		
 		
 		while (!keyboard1.hasNext("done")) {
-			name = keyboard1.next();
+			person = keyboard1.next();
 			sex = keyboard1.next().charAt(0);
-			people.put(name, sex);
+			
+			Node node = new Node(person, sex);
+			people.put(person, node);
 			
 		}
 		
 		//Debugging only
-		for (Map.Entry<String, Character> entry : people.entrySet()) {
+		for (Entry<String, Node> entry : people.entrySet()) {
             String k = entry.getKey();
-            char v = entry.getValue();
-            System.out.println("Key: " + k + ", Value: " + v);
+            Node n = entry.getValue();
+            System.out.println("Key: " + k + " |-------| " + n.toString());
         }
 		
 		while (!keyboard2.hasNext("done")) {
-			countP = 0;
-			countC = 0;
 			parent = keyboard2.next();
 			children = keyboard2.next();
 			
-			storedParents.add(parent);
-			storedChildrens.add(children);
-			
-			for (String str1 : storedParents) {
-				if (children.equals(str1)) {
-					countP++;
-				}
-			}
-			
-			for (String str1 : storedChildrens) {
-				if (children.equals(str1)) {
-					countC++;
-				}
-			}
-			
-			System.out.println("countP: " + countP + " countC: " + countC);
-			
-			if (countP == 0 && countC < 2) {
-				BinaryTree tree = new BinaryTree(children, people.get(children));
-				tree.insert(tree.getRoot(), parent, people.get(parent));
-				binaryTrees.add(tree);
+			if (people.get(parent).getSex() == 'W') {
+				people.get(children).setMom(people.get(parent));
+				people.get(parent).setKid(people.get(children));
 				
-			} else if (countP == 1) {
-				for (int i = 0; i < binaryTrees.size(); i++) {
-					if (binaryTrees.get(i).find(children) == true) {
-						binaryTrees.get(i).insert(binaryTrees.get(i).getRoot(), parent, people.get(parent));
-					}
-				}
-			} else {
-				for (BinaryTree t : binaryTrees) {
-					if (t.rootMatch(children)) {
-						t.insert(t.getRoot(), parent, people.get(parent));
-						
-					}
-				}
-			} 
-			
-			
+			} else if (people.get(parent).getSex() == 'M') {
+				people.get(children).setDad(people.get(parent));
+				people.get(parent).setKid(people.get(children));
+			}
 			
 			
 		}
-		
-				
 		
 		//Debugging only
-		System.out.println(binaryTrees.size());
-		for(BinaryTree t : binaryTrees) {
-            System.out.println(t.getRoot().getName());
+		for (Entry<String, Node> entry : people.entrySet()) {
+            String k = entry.getKey();
+            Node n = entry.getValue();
+            System.out.println(k + "  -->>  " + n.getKid());
         }
-		System.out.println();
 		
-		
-		for (BinaryTree t : binaryTrees) {
-			t.printInorder(t.getRoot());
-			System.out.println();
+		for (Node n : people.values()) {
+			if (n.getKid() == null) {
+				roots.add(n);
+			}
 		}
 		
+		//Debugging only
+		for (Node n : roots) {
+			System.out.println(n.getName());
+		}
+		
+		for (Node n : roots) {
+			BinaryTree t = new BinaryTree(n);
+			trees.add(t);
+		}
+				
+		//Debugging only 
+		for (BinaryTree t : trees) {
+			System.out.println(t.getRoot().getName());
+		}
 		
 		
 		
@@ -109,127 +91,76 @@ public class FamilyTree {
 	public static class Node {
 		private String name;
 		private char sex;
-		protected Node left;
-		protected Node right;
+		private Node mom;
+		private Node dad;
+		private Node kid;
 		
 		public Node(String name, char sex){
 			this.name = name;
 			this.sex = sex;
-			left = null;
-			right = null;
+			mom = null;
+			dad = null;
+			kid = null;
 		}
-		
+
 		public String getName() {
 			return name;
 		}
-		
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
 		public char getSex() {
 			return sex;
+		}
+
+		public void setSex(char sex) {
+			this.sex = sex;
+		}
+
+		public Node getMom() {
+			return mom;
+		}
+
+		public void setMom(Node mom) {
+			this.mom = mom;
+		}
+
+		public Node getDad() {
+			return dad;
+		}
+
+		public void setDad(Node dad) {
+			this.dad = dad;
+		}
+
+		public Node getKid() {
+			return kid;
+		}
+
+		public void setKid(Node kid) {
+			this.kid = kid;
 		}
 	} 
 	
 	public static class BinaryTree { 
 	    private Node root; 
 	  
-	    BinaryTree(String name, char sex) { 
-	        root = new Node(name, sex); 
-	    } 
-	  
-	    BinaryTree() { 
-	        root = null; 
+	    BinaryTree(Node node) { 
+	        root = node; 
 	    } 
 	    
 	    public Node getRoot() {
-	    	if (root != null) {
-	    		return root;
-	    	}
-	    	return null;
-	    }
+			return root;
+		}
 
-	    public void insert(Node node, String name, char sex) { 
-	    	Queue<Node> q = new LinkedList<Node>(); 
-	        q.add(node); 
-	       
-	        // Do level order traversal until we find 
-	        // an empty place.  
-	        while (!q.isEmpty()) { 
-	            node = q.peek(); 
-	            q.remove(); 
-	       
-	            if (node.left == null) { 
-	                node.left = new Node(name, sex); 
-	                break; 
-	            } else
-	                q.add(node.left); 
-	       
-	            if (node.right == null) { 
-	                node.right = new Node(name, sex); 
-	                break; 
-	            } else
-	                q.add(node.right); 
-	        }
-	    	
-	    } 
-	       
-	
-	    public int depth(Node root) {
-	    	if (root == null) {
-	    		return 0;
-	    	} else {
-	    		int left= depth(root.left);
-	    		int right = depth(root.right);
+		public void setRoot(Node root) {
+			this.root = root;
+		}
 	    
-		    	if (left > right) {
-		    		return (left + 1);
-		    	} else {
-		    		return (right+ 1);
-		    	}
-	    	}
-	    }
-	    
-	    public boolean find(String name) {
-	    	return findRec(root, name);
-	    }
-	    
-	    public boolean rootMatch(String name) {
-	    	if (root.getName().equals(name)) {
-	    		return true;
-	    	}
-	    	
-	    	return false;
-	    }
 	   
-	    private boolean findRec(Node node, String name) {  
-            if (node.getName().equals(name)) {
-            	return true;
-            }
-            
-            if (node.left != null) {
-            	return findRec(node.left, name);
-            }
-            
-            if (node.right != null) {
-            	return findRec(node.right, name);
-            }
-            
-            return false;
-	        
-	    }
 
-	    public void printInorder(Node node) { 
-	        if (node == null) 
-	            return; 
-	  
-	        /* first recur on left child */
-	        printInorder(node.left); 
-	  
-	        /* then print the data of node */
-	        System.out.print(node.getName() + " "); 
-	  
-	        /* now recur on right child */
-	        printInorder(node.right); 
-	    }
-	      
 	}
 	
 }
