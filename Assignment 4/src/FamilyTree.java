@@ -9,93 +9,97 @@ public class FamilyTree {
 		//Variable decleration and initialization
 		Scanner keyboard1 = new Scanner(new File("prob1-1.txt"));
 		Scanner keyboard2 = new Scanner(new File ("prob1-2.txt"));
-		Map<String, Node> people = new HashMap<String, Node>(); 
-		Set<Node> roots = new HashSet<Node>();
-		Queue<BinaryTree> trees = new LinkedList<BinaryTree>();
-		String person, parent, children; char sex; 
+		Map<String, Person> people = new HashMap<String, Person>(); 
+		Map<Person, LinkedHashSet<Person>> links = new HashMap<Person, LinkedHashSet<Person>>();
+		String name, parent, children; char sex; 
 		
 		
 		while (!keyboard1.hasNext("done")) {
-			person = keyboard1.next();
+			name = keyboard1.next();
 			sex = keyboard1.next().charAt(0);
 			
-			Node node = new Node(person, sex);
-			people.put(person, node);
+			Person person = new Person(name, sex);
+			people.put(name, person);
 			
 		}
-		
-		//Debugging only
-		for (Entry<String, Node> entry : people.entrySet()) {
-            String k = entry.getKey();
-            Node n = entry.getValue();
-            System.out.println("Key: " + k + " |-------| " + n.toString());
-        }
 		
 		while (!keyboard2.hasNext("done")) {
 			parent = keyboard2.next();
 			children = keyboard2.next();
 			
 			if (people.get(parent).getSex() == 'W') {
-				people.get(children).setMom(people.get(parent));
-				people.get(parent).setKid(people.get(children));
+				if (people.get(children).getMom() == null) {
+					people.get(children).setMom(people.get(parent));
+					people.get(parent).setKid(people.get(children));
+				} else {
+					people.get(children).setDad(people.get(parent));
+				}
 				
 			} else if (people.get(parent).getSex() == 'M') {
-				people.get(children).setDad(people.get(parent));
-				people.get(parent).setKid(people.get(children));
+				if (people.get(children).getDad() == null) {
+					people.get(children).setDad(people.get(parent));
+					people.get(parent).setKid(people.get(children));
+				} else {
+					people.get(children).setMom(people.get(parent));
+				}
 			}
-			
 			
 		}
 		
-		//Debugging only
-		for (Entry<String, Node> entry : people.entrySet()) {
-            String k = entry.getKey();
-            Node n = entry.getValue();
-            System.out.println(k + "  -->>  " + n.getKid());
+		for (Person p : people.values()) {
+			if (p.getKid() == null) {
+				LinkedHashSet<Person> set = new LinkedHashSet<Person>();
+				set.add(p);
+				links.put(p, set);
+			}
+		}
+		
+		for (Person root : links.keySet()) {
+			for (Person p : people.values()) {
+				if (links.get(root).contains(p.getKid()) && p.getSex() == 'W') {
+					links.get(root).add(p);
+				}
+			}
+		}
+		
+		
+		for (Entry<Person, LinkedHashSet<Person>> entry : links.entrySet()) {
+            Person k = entry.getKey();
+            LinkedHashSet<Person> link = entry.getValue();
+            ArrayList<String> familyTree = new ArrayList<String>();
+            
+            for (Person p : link) {
+            	familyTree.add(p.getName());
+            }
+            
+            Collections.reverse(familyTree);
+            
+            System.out.print(k.getName() + ": ");
+            
+            for (String s : familyTree) {
+            	if (s.equals(familyTree.get(familyTree.size() - 1))) {
+            		System.out.print(s);
+            	} else {
+            		System.out.print(s + " --> ");
+            	}
+            }
+            
+            System.out.println();
         }
-		
-		for (Node n : people.values()) {
-			if (n.getKid() == null) {
-				roots.add(n);
-			}
-		}
-		
-		//Debugging only
-		for (Node n : roots) {
-			System.out.println(n.getName());
-		}
-		
-		for (Node n : roots) {
-			BinaryTree t = new BinaryTree(n);
-			trees.add(t);
-		}
-				
-		//Debugging only 
-		for (BinaryTree t : trees) {
-			System.out.println(t.getRoot().getName());
-		}
-		
-		
-		
-		
-		
 		
 		keyboard1.close();
 		keyboard2.close();
 		
 	}
-		
 	
-	
-	
-	public static class Node {
+	public static class Person {
 		private String name;
 		private char sex;
-		private Node mom;
-		private Node dad;
-		private Node kid;
+		private Person mom;
+		private Person dad;
+		private Person kid;
 		
-		public Node(String name, char sex){
+		public Person(String name, char sex){
 			this.name = name;
 			this.sex = sex;
 			mom = null;
@@ -119,48 +123,28 @@ public class FamilyTree {
 			this.sex = sex;
 		}
 
-		public Node getMom() {
+		public Person getMom() {
 			return mom;
 		}
 
-		public void setMom(Node mom) {
+		public void setMom(Person mom) {
 			this.mom = mom;
 		}
 
-		public Node getDad() {
+		public Person getDad() {
 			return dad;
 		}
 
-		public void setDad(Node dad) {
+		public void setDad(Person dad) {
 			this.dad = dad;
 		}
 
-		public Node getKid() {
+		public Person getKid() {
 			return kid;
 		}
 
-		public void setKid(Node kid) {
+		public void setKid(Person kid) {
 			this.kid = kid;
 		}
 	} 
-	
-	public static class BinaryTree { 
-	    private Node root; 
-	  
-	    BinaryTree(Node node) { 
-	        root = node; 
-	    } 
-	    
-	    public Node getRoot() {
-			return root;
-		}
-
-		public void setRoot(Node root) {
-			this.root = root;
-		}
-	    
-	   
-
-	}
-	
 }
