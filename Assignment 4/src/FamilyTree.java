@@ -7,8 +7,8 @@ public class FamilyTree {
 	public static void main(String[] args) throws IOException {
 		
 		//Variable decleration and initialization
-		Scanner keyboard1 = new Scanner(new File("prob1-1.txt"));
-		Scanner keyboard2 = new Scanner(new File ("prob1-2.txt"));
+		Scanner keyboard1 = new Scanner((System.in));
+		Scanner keyboard2 = new Scanner((System.in));
 		Map<String, Person> people = new HashMap<String, Person>(); 
 		Map<Person, LinkedHashSet<Person>> links = new HashMap<Person, LinkedHashSet<Person>>();
 		String name, parent, children; char sex; 
