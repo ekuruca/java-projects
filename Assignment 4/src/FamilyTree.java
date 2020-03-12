@@ -4,100 +4,13 @@ import java.util.*;
 import java.util.Map.Entry;
 
 public class FamilyTree {
-	public static void main(String[] args) throws IOException {
-		
-		//Variable decleration and initialization
-		Scanner keyboard1 = new Scanner((System.in));
-		Scanner keyboard2 = new Scanner((System.in));
-		Map<String, Person> people = new HashMap<String, Person>(); 
-		Map<Person, LinkedHashSet<Person>> links = new HashMap<Person, LinkedHashSet<Person>>();
-		String name, parent, children; char sex; 
-		
-		
-		while (!keyboard1.hasNext("done")) {
-			name = keyboard1.next();
-			sex = keyboard1.next().charAt(0);
-			
-			Person person = new Person(name, sex);
-			people.put(name, person);
-			
-		}
-		
-		while (!keyboard2.hasNext("done")) {
-			parent = keyboard2.next();
-			children = keyboard2.next();
-			
-			if (people.get(parent).getSex() == 'W') {
-				if (people.get(children).getMom() == null) {
-					people.get(children).setMom(people.get(parent));
-					people.get(parent).setKid(people.get(children));
-				} else {
-					people.get(children).setDad(people.get(parent));
-				}
-				
-			} else if (people.get(parent).getSex() == 'M') {
-				if (people.get(children).getDad() == null) {
-					people.get(children).setDad(people.get(parent));
-					people.get(parent).setKid(people.get(children));
-				} else {
-					people.get(children).setMom(people.get(parent));
-				}
-			}
-			
-		}
-		
-		for (Person p : people.values()) {
-			if (p.getKid() == null) {
-				LinkedHashSet<Person> set = new LinkedHashSet<Person>();
-				set.add(p);
-				links.put(p, set);
-			}
-		}
-		
-		for (Person root : links.keySet()) {
-			for (Person p : people.values()) {
-				if (links.get(root).contains(p.getKid()) && p.getSex() == 'W') {
-					links.get(root).add(p);
-				}
-			}
-		}
-		
-		
-		for (Entry<Person, LinkedHashSet<Person>> entry : links.entrySet()) {
-            Person k = entry.getKey();
-            LinkedHashSet<Person> link = entry.getValue();
-            ArrayList<String> familyTree = new ArrayList<String>();
-            
-            for (Person p : link) {
-            	familyTree.add(p.getName());
-            }
-            
-            Collections.reverse(familyTree);
-            
-            System.out.print(k.getName() + ": ");
-            
-            for (String s : familyTree) {
-            	if (s.equals(familyTree.get(familyTree.size() - 1))) {
-            		System.out.print(s);
-            	} else {
-            		System.out.print(s + " --> ");
-            	}
-            }
-            
-            System.out.println();
-        }
-		
-		keyboard1.close();
-		keyboard2.close();
-		
-	}
 	
 	public static class Person {
-		private String name;
-		private char sex;
-		private Person mom;
-		private Person dad;
-		private Person kid;
+		String name;
+		char sex;
+		Person mom;
+		Person dad;
+		Person kid;
 		
 		public Person(String name, char sex){
 			this.name = name;
@@ -106,45 +19,160 @@ public class FamilyTree {
 			dad = null;
 			kid = null;
 		}
-
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public char getSex() {
-			return sex;
-		}
-
-		public void setSex(char sex) {
-			this.sex = sex;
-		}
-
-		public Person getMom() {
-			return mom;
-		}
-
-		public void setMom(Person mom) {
-			this.mom = mom;
-		}
-
-		public Person getDad() {
-			return dad;
-		}
-
-		public void setDad(Person dad) {
-			this.dad = dad;
-		}
-
-		public Person getKid() {
-			return kid;
-		}
-
-		public void setKid(Person kid) {
-			this.kid = kid;
-		}
 	} 
+	
+	public static class Dll {
+		Node head;
+		
+		public class Node {
+			Person person;
+			Node next;
+			Node previous;
+			
+			Node(Person person) {
+				this.person = person;
+			}
+			
+		}
+			
+		// Adding a node at the front of the list 
+		public void push(Person person) { 
+	        Node node = new Node(person); 
+	  
+	        node.next = head; 
+	        node.previous = null; 
+	  
+	        if (head != null) {
+	            head.previous = node; 
+	        }
+	  
+	        head = node; 
+	    }
+		  
+	    public void append(Person person) { 
+	        Node node = new Node(person); 
+	        Node last = head;
+	        node.next = null; 
+	  
+	        if (head == null) { 
+	            node.previous = null; 
+	            head = node; 
+	            return; 
+	        } 
+	  
+	        while (last.next != null) {
+	            last = last.next; 
+	        }
+	  
+	        last.next = node; 
+	        node.previous = last; 
+	    } 
+	  
+	    public void printlist(Node node, Person person) { 
+	        System.out.print(person.name + ": ");
+	        while (node != null) { 
+	        	if (node.equals(head)) {
+	        		System.out.print( node.person.name);
+	        		node = node.next;
+	        	} else {
+	        		System.out.print(" -> " + node.person.name);
+	        		node = node.next; 
+	        	}
+	        } 
+	        
+	        System.out.println(); 
+	    }
+	}
+		
+	public static void main(String[] args) throws IOException {
+		
+		//Variable decleration and initialization
+		Scanner keyboard = new Scanner(new File("prob1-1.txt"));
+		Map<String, Person> people = new HashMap<String, Person>(); 
+		HashSet<Person> roots = new HashSet<Person>();
+		HashSet<Person> parents = new HashSet<Person>();
+		Map<Person, Dll> links = new HashMap<Person, Dll>();
+		String name, parent, children; char sex; boolean stop = true;
+		
+		while (stop) {
+			name = keyboard.next();
+			
+			if (name.equals("done")) {
+				stop = false;
+			} else {
+				sex = keyboard.next().charAt(0);
+				
+				Person person = new Person(name, sex);
+				people.put(name, person);
+			}
+		}
+		
+		stop = true;
+		
+		while (stop) {
+			parent = keyboard.next();
+			
+			if (parent.equals("done")) {
+				stop = false;
+				
+			} else {
+				children = keyboard.next();
+				
+				if (people.get(parent).sex == 'W') {
+					if (people.get(children).mom == null) {
+						people.get(children).mom = people.get(parent);
+						people.get(parent).kid = people.get(children);
+					} else {
+						people.get(children).dad = people.get(parent);
+						people.get(parent).kid = people.get(parent);
+					}
+					
+				} else if (people.get(parent).sex == 'M') {
+					if (people.get(children).dad == null) {
+						people.get(children).dad = people.get(parent);
+						people.get(parent).kid = people.get(children);
+					} else {
+						people.get(children).mom = people.get(parent);
+						people.get(parent).kid = people.get(parent);
+					}
+				}
+			}
+		}
+		
+		for (String s : people.keySet()) {
+			if (people.get(s).kid == null) {
+				roots.add(people.get(s));
+			} else {
+				parents.add(people.get(s));
+			}
+		}
+		
+		for (Person p : roots) {
+			links.put(p, new Dll());
+		}
+		
+		
+		for (Person l : links.keySet()) {
+			for (Person p : roots) {
+				if (p.equals(l)) {
+					links.get(l).append(p);
+					links.get(l).push(p.mom);
+				}
+			}
+			
+			for (Person p : parents) {
+				if (links.get(l).head.person.mom != null) {
+					if (links.get(l).head.person.mom.equals(p)) {
+						links.get(l).push(p);
+					}
+				} else {
+					break;
+				}
+			}
+			
+			links.get(l).printlist(links.get(l).head, l);;
+		}
+		
+		keyboard.close();
+	}	
 }
