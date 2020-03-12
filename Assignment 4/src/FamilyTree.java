@@ -32,7 +32,6 @@ public class FamilyTree {
 			
 		}
 			
-		// Adding a node at the front of the list 
 		public void push(Person person) { 
 	        Node node = new Node(person); 
 	  
