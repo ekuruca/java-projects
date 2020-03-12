@@ -1,7 +1,4 @@
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
-import java.util.Map.Entry;
 
 public class FamilyTree {
 	
@@ -84,10 +81,10 @@ public class FamilyTree {
 	    }
 	}
 		
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 		
 		//Variable decleration and initialization
-		Scanner keyboard = new Scanner(new File("prob1-1.txt"));
+		Scanner keyboard = new Scanner(System.in);
 		Map<String, Person> people = new HashMap<String, Person>(); 
 		HashSet<Person> roots = new HashSet<Person>();
 		HashSet<Person> parents = new HashSet<Person>();
