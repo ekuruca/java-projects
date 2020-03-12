@@ -155,28 +155,29 @@ public class FamilyTree {
 		
 		
 		for (Person l : links.keySet()) {
-			if (!roots.isEmpty()) {
-				for (Person p : roots) {
-					if (p.equals(l)) {
-						links.get(l).append(p);
-						links.get(l).push(p.mom);
-					}
+			for (Person p : roots) {
+				if (p.equals(l)) {
+					links.get(l).append(p);
+					links.get(l).push(p.mom);
 				}
 			}
 			
-			if (!parents.isEmpty()) {
-				for (Person p : parents) {
-					if (links.get(l).head.person.mom != null) {
-						if (links.get(l).head.person.mom.equals(p)) {
-							links.get(l).push(p);
-						}
-					} else {
-						break;
+			for (Person p : parents) {
+				if (links.get(l).head.person.mom != null) {
+					if (links.get(l).head.person.mom.equals(p)) {
+						links.get(l).push(p);
 					}
+				} else {
+					break;
 				}
 			}
 			
-			links.get(l).printlist(links.get(l).head, l);;
+			if (parents.isEmpty()) {
+				System.out.print(l.name + ": ");
+			} else {
+				links.get(l).printlist(links.get(l).head, l);
+			}
+			
 		}
 		
 		keyboard.close();
