@@ -79,15 +79,17 @@ public class FamilyTree {
 	        System.out.println(); 
 	    }
 	}
+	
 		
 	public static void main(String[] args) {
 		
 		//Variable decleration and initialization
 		Scanner keyboard = new Scanner(System.in);
 		Map<String, Person> people = new HashMap<String, Person>(); 
+		Map<String, Person> people1 = new HashMap<String, Person>();
+		Map<Person, Dll> links = new HashMap<Person, Dll>();
 		HashSet<Person> roots = new HashSet<Person>();
 		HashSet<Person> parents = new HashSet<Person>();
-		Map<Person, Dll> links = new HashMap<Person, Dll>();
 		String name, parent, children; char sex; boolean stop = true;
 		
 		while (stop) {
@@ -99,9 +101,13 @@ public class FamilyTree {
 				sex = keyboard.next().charAt(0);
 				
 				Person person = new Person(name, sex);
-				people.put(name, person);
+				people1.put(name, person);
 			}
 		}
+		
+		for (Map.Entry<String, Person> p : people1.entrySet()) {
+	         people.put(p.getKey(), p.getValue());
+	    }
 		
 		stop = true;
 		
@@ -149,20 +155,24 @@ public class FamilyTree {
 		
 		
 		for (Person l : links.keySet()) {
-			for (Person p : roots) {
-				if (p.equals(l)) {
-					links.get(l).append(p);
-					links.get(l).push(p.mom);
+			if (!roots.isEmpty()) {
+				for (Person p : roots) {
+					if (p.equals(l)) {
+						links.get(l).append(p);
+						links.get(l).push(p.mom);
+					}
 				}
 			}
 			
-			for (Person p : parents) {
-				if (links.get(l).head.person.mom != null) {
-					if (links.get(l).head.person.mom.equals(p)) {
-						links.get(l).push(p);
+			if (!parents.isEmpty()) {
+				for (Person p : parents) {
+					if (links.get(l).head.person.mom != null) {
+						if (links.get(l).head.person.mom.equals(p)) {
+							links.get(l).push(p);
+						}
+					} else {
+						break;
 					}
-				} else {
-					break;
 				}
 			}
 			
