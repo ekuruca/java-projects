@@ -86,7 +86,6 @@ public class FamilyTree {
 		//Variable decleration and initialization
 		Scanner keyboard = new Scanner(System.in);
 		Map<String, Person> people = new HashMap<String, Person>(); 
-		Map<String, Person> people1 = new HashMap<String, Person>();
 		Map<Person, Dll> links = new HashMap<Person, Dll>();
 		HashSet<Person> roots = new HashSet<Person>();
 		HashSet<Person> parents = new HashSet<Person>();
@@ -101,13 +100,9 @@ public class FamilyTree {
 				sex = keyboard.next().charAt(0);
 				
 				Person person = new Person(name, sex);
-				people1.put(name, person);
+				people.put(name, person);
 			}
 		}
-		
-		for (Map.Entry<String, Person> p : people1.entrySet()) {
-	         people.put(p.getKey(), p.getValue());
-	    }
 		
 		stop = true;
 		
@@ -173,7 +168,7 @@ public class FamilyTree {
 			}
 			
 			if (parents.isEmpty()) {
-				System.out.print(l.name + ": ");
+				System.out.print(l.name + ": " + l.name);
 			} else {
 				links.get(l).printlist(links.get(l).head, l);
 			}
