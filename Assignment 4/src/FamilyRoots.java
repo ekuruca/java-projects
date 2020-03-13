@@ -1,8 +1,9 @@
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-public class FamilyJoins {
+public class FamilyRoots {
 		
 	public static class Person {
 		String name;
@@ -20,7 +21,29 @@ public class FamilyJoins {
 		}
 	} 
 	
-	public static void main(String[] args) {
+	
+	public static int ancestor(int count, Person p1, Person p2) {
+		if (p1.mom != null && p2.mom != null) { 
+			if (p1.mom.equals(p2.mom)) {
+				count++;
+			} else {
+				count = ancestor(count, p1, p2.mom);
+				count = ancestor(count, p1.mom, p2);
+			}
+			
+		} else if (p1.dad != null && p2.dad != null) { 
+			if (p1.dad.equals(p2.dad)) {
+				count++;
+			} else {
+				count = ancestor(count, p1, p2.dad);
+				count = ancestor(count, p1.dad, p2);
+			}
+		}
+		
+    	return count;
+    }
+	
+	public static void main(String[] args) throws IOException {
 		
 		//Variable decleration and initialization
 		Scanner keyboard = new Scanner(System.in);
@@ -81,51 +104,21 @@ public class FamilyJoins {
 			if (partner1.equals("done")) {
 				stop = false;
 			} else {
-				
 				partner2 = keyboard.next();
 				
-				if (people.get(partner1).kid != null && people.get(partner2) != null) {
-					if (people.get(partner1).kid.equals(people.get(partner2))) {
-						System.out.println(partner1 + " and " + partner2 + " are too closely related");
-					} else {
-						System.out.println(partner1 + " and " + partner2 + " are not closely related");
-					}
-					
-				} else if (people.get(partner1) != null && people.get(partner2).kid != null) {
-					if (people.get(partner1).equals(people.get(partner2).kid)) {
-						System.out.println(partner1 + " and " + partner2 + " are too closely related");
-					} else {
-						System.out.println(partner1 + " and " + partner2 + " are not closely related");
-					}
-					
-				} else if  (people.get(partner1).mom != null && people.get(partner2).mom != null) {
-					if (people.get(partner1).mom.equals(people.get(partner2).mom)) {
-						System.out.println(partner1 + " and " + partner2 + " are too closely related");
-						
-					} else {
-						if (people.get(partner1).mom.mom.equals(people.get(partner2).mom.mom)) {
-							System.out.println(partner1 + " and " + partner2 + " are too closely related");
-						} else {
-							System.out.println(partner1 + " and " + partner2 + " are not closely related");
-						}
+				Person p1 = people.get(partner1);
+				Person p2 = people.get(partner2);
 				
-					}
+				
+				int i = ancestor(0, p1, p2);
+				
+				if (i == 0) {
+					System.out.println(p1.name + " and " + p2.name + " do not share any known ancestors");
 					
-				} else if (people.get(partner1).dad != null && people.get(partner2).dad != null) {
-					if (people.get(partner1).dad.equals(people.get(partner2).dad)) {
-						System.out.println(partner1 + " and " + partner2 + " are too closely related");
-						
-					} else {
-						if (people.get(partner1).dad.dad.equals(people.get(partner2).dad.dad)) {
-							System.out.println(partner1 + " and " + partner2 + " are too closely related");
-						} else {
-							System.out.println(partner1 + " and " + partner2 + " are not closely related");
-						}
-						
-					}
-					
-				}  
-			}
+				} else {
+					System.out.println(p1.name + " and " + p2.name + " share a common ancestor from " + i + " generations ago");
+				}
+			}			
 		}
 		
 		keyboard.close();
