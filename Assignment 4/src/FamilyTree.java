@@ -18,6 +18,7 @@ public class FamilyTree {
 		}
 	} 
 	
+	//Doubly Linked List class
 	public static class Dll {
 		Node head;
 		
@@ -31,7 +32,8 @@ public class FamilyTree {
 			}
 			
 		}
-			
+		
+		//Pushes Person to the front
 		public void push(Person person) { 
 	        Node node = new Node(person); 
 	  
@@ -44,7 +46,8 @@ public class FamilyTree {
 	  
 	        head = node; 
 	    }
-		  
+		 
+		//Adds Person at the end (tail)
 	    public void append(Person person) { 
 	        Node node = new Node(person); 
 	        Node last = head;
@@ -64,7 +67,8 @@ public class FamilyTree {
 	        node.previous = last; 
 	    } 
 	  
-	    public void printlist(Node node, Person person) { 
+	    //Prints the doubly linked list
+	    public void print(Node node, Person person) { 
 	        System.out.print(person.name + ": ");
 	        while (node != null) { 
 	        	if (node.equals(head)) {
@@ -92,6 +96,7 @@ public class FamilyTree {
 		HashSet<Person> parents = new HashSet<Person>();
 		String name, parent, children; char sex; boolean stop = true;
 		
+		//Adds to the first HashMap
 		while (stop) {
 			name = keyboard.next();
 			
@@ -102,13 +107,14 @@ public class FamilyTree {
 				
 				Person person = new Person(name, sex);
 				people.put(name, person);
-				insertion.add(person);
+				insertion.add(person); //Keeps track of insertion order
 			}
 		}
 		
 		
 		stop = true;
 		
+		//Assings parent informations
 		while (stop) {
 			parent = keyboard.next();
 			
@@ -139,6 +145,8 @@ public class FamilyTree {
 			}
 		}
 		
+		//If Person doesn't have a kid, adds them to the root HashSet
+		//Else adds them to the parent HashSet
 		for (String s : people.keySet()) {
 			if (people.get(s).kid == null) {
 				roots.add(people.get(s));
@@ -148,12 +156,13 @@ public class FamilyTree {
 		}
 		
 		
-		
+		//Adds to the second HashMap where the key points to a doubly linked list
 		for (Person p : roots) {
 			links.put(p, new Dll());
 		}
 		
 		
+		//Adds parents to the doubly linked list
 		for (Person l : insertion) { 
 			if (links.containsKey(l)) {
 				for (Person p : roots) {
@@ -176,7 +185,7 @@ public class FamilyTree {
 				if (parents.isEmpty()) {
 					System.out.println(l.name + ": " + l.name);
 				} else {
-					links.get(l).printlist(links.get(l).head, l);
+					links.get(l).print(links.get(l).head, l);
 				}
 			}
 		}

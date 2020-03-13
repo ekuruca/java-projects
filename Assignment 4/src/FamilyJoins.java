@@ -27,6 +27,7 @@ public class FamilyJoins {
 		Map<String, Person> people = new HashMap<String, Person>();
 		String name, parent, children, partner1, partner2; char sex; boolean stop = true;
 		
+		//Adds to the first HashMap
 		while (stop) {
 			name = keyboard.next();
 			
@@ -43,6 +44,7 @@ public class FamilyJoins {
 		
 		stop = true;
 		
+		//Assings parent informations
 		while (stop) {
 			parent = keyboard.next();
 			
@@ -75,6 +77,7 @@ public class FamilyJoins {
 		
 		stop = true;
 		
+		//Determines whether partners should partner or not
 		while (stop) {
 			partner1 = keyboard.next();
 			

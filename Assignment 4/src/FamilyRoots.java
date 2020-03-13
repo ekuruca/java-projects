@@ -22,6 +22,7 @@ public class FamilyRoots {
 	} 
 	
 	
+	//Recursively checks if the two person have common ancestors
 	public static int ancestor(int count, Person p1, Person p2) {
 		if (p1.mom != null && p2.mom != null) { 
 			if (p1.mom.equals(p2.mom)) {
@@ -50,6 +51,7 @@ public class FamilyRoots {
 		Map<String, Person> people = new HashMap<String, Person>();
 		String name, parent, children, partner1, partner2; char sex; boolean stop = true;
 		
+		//Adds to the first HashMap
 		while (stop) {
 			name = keyboard.next();
 			
@@ -66,6 +68,7 @@ public class FamilyRoots {
 		
 		stop = true;
 		
+		//Assings parent informations
 		while (stop) {
 			parent = keyboard.next();
 			
@@ -98,6 +101,7 @@ public class FamilyRoots {
 		
 		stop = true;
 		
+		//Checks their ancestors
 		while (stop) {
 			partner1 = keyboard.next();
 			
